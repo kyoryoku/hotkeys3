@@ -1,5 +1,6 @@
 package by.kirino.hotkeys3;
 
+import javafx.application.Platform;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -34,12 +35,13 @@ public class Hotkey implements HotkeyEventPublisher, NativeKeyListener {
         GlobalScreen.removeNativeKeyListener(this);
     }
 
-
     ArrayList<KeyListener> subscribers = new ArrayList<>();
 
     @Override
     public void addListener(KeyListener listener) {
         this.subscribers.add(listener);
+
+        System.out.println("Добавлено подписчиков: " + subscribers.size());
     }
 
     public void addListeners(KeyListener... listeners) {
@@ -70,45 +72,51 @@ public class Hotkey implements HotkeyEventPublisher, NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT){
-            shift = true;
-            return;
-        }
+        Platform.runLater(()->{
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT){
+                shift = true;
+                return;
+            }
 
-        //Если нажали контрол, ставим флаг контрол и выходим
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL){
-            ctrl = true;
-            return;
-        }
+            //Если нажали контрол, ставим флаг контрол и выходим
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL){
+                ctrl = true;
+                return;
+            }
 
-        //Если нажали альт, ставим флаш альт и выходим
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ALT){
-            alt = true;
-            return;
-        }
+            //Если нажали альт, ставим флаш альт и выходим
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ALT){
+                alt = true;
+                return;
+            }
 
-        pressedCombination = new KeyCombination(nativeKeyEvent.getRawCode(), shift, ctrl, alt);
-        notifyListener();
+            pressedCombination = new KeyCombination(nativeKeyEvent.getRawCode(), shift, ctrl, alt);
+            notifyListener();
+        });
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-        //Если нажали шифт, ставим флаг шифт и выходим
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT){
-            shift = false;
-            return;
-        }
+        Platform.runLater(()->{
 
-        //Если нажали контрол, ставим флаг контрол и выходим
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL){
-            ctrl = false;
-            return;
-        }
+            //Если нажали шифт, ставим флаг шифт и выходим
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT){
+                shift = false;
+                return;
+            }
 
-        //Если нажали альт, ставим флаш альт и выходим
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ALT){
-            alt = false;
-            return;
-        }
+            //Если нажали контрол, ставим флаг контрол и выходим
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL){
+                ctrl = false;
+                return;
+            }
+
+            //Если нажали альт, ставим флаш альт и выходим
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ALT){
+                alt = false;
+                return;
+            }
+        });
+
     }
 }

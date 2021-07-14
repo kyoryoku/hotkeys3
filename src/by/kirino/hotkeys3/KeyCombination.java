@@ -79,4 +79,13 @@ public class KeyCombination {
 
         return str;
     }
+
+    public boolean equals(KeyCombination otherCombination){
+        return this.toShortString().equals(otherCombination.toShortString()) &
+        this.toLongString().equals(otherCombination.toLongString());
+    }
+
+    public boolean isDefined(){
+        return !this.key.getShortName().equals("UNDEFINED");
+    }
 }
